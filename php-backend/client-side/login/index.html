@@ -1,0 +1,83 @@
+<?php
+session_start();
+if(!empty($_SESSION['login_user']))
+{
+header('Location: home.php');
+}
+?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Project BlendClust | Login  </title>
+<link rel="stylesheet" href="css/style.css"/>   //path to stylesheet
+<script src="js/jquery.min.js"></script>        //including jQuery
+<script src="js/jquery.ui.shake.js"></script>   //including jQuery-Extension Shake
+	<script>                               
+			$(document).ready(function() {
+			
+			$('#login').click(function()
+			{
+                /*
+                Now defining the values for ajax
+                */
+			var username=$("#username").val();
+			var password=$("#password").val();
+		    var dataString = 'username='+username+'&password='+password;
+			if($.trim(username).length>0 && $.trim(password).length>0)
+			{
+			
+ 
+			$.ajax({                                                         //call ajax
+            type: "POST",   
+            url: "ajaxLogin.php",                                           //URL to the php-Script (Beware of CORS, will be strict on many devices
+            data: dataString,
+            cache: false,
+            beforeSend: function(){ $("#login").val('Connecting...');},     //satisfy the user
+            success: function(data){
+            if(data)
+            {
+            $("body").load("home.php").hide().fadeIn(1500).delay(6000);     //fade into home.php if success
+            }
+            else
+            {
+             $('#box').shake();                                             //shake tha booty if password or user false
+			 $("#login").val('Login')
+			 $("#error").html("<span style='color:#cc0000'>Error:</span> Invalid username and password. ");
+            }
+            }
+            });
+			
+			}
+			return false;
+			});
+			
+				
+			});
+		</script>
+</head>
+
+<body>
+<div id="main">
+<h1>Ajax Login Page with Shake Effect</h1>
+
+<div id="box">
+<form action="" method="post">
+<label>Username</label> 
+<input type="text" name="username" class="input" autocomplete="off" id="username"/>
+<label>Password </label>
+<input type="password" name="password" class="input" autocomplete="off" id="password"/><br/>
+<input type="submit" class="button button-primary" value="Log In" id="login"/> 
+<span class='msg'></span> 
+
+<div id="error">
+
+</div>	
+
+</div>
+</form>	
+</div>
+
+</div>
+</body>
+</html>
